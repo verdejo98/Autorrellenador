@@ -1,0 +1,60 @@
+utorrellenador v2: Con correos automaticos
+
+-  A la version actual le agregaré una funcion para enviar correos automaticos de NCs no emitidas y que descargue comprobantes automáticamente para adjuntarlos al correo. 
+
+Funciones en orden de desarrollo:
+
+1. Crear una plantilla de correo con la info de refund o epv. 
+2. Dejar correo como un borrador, mensaje listo para enviar o copiado en el portapapeles (version de prueba).
+3. Descarga de archivo de comprobante epv.
+4. Descarga de archivo de comprobante transbank.
+5. Cambio de nombre de archivo transbank.
+
+
+
+
+
+
+Datos para descarga comprobante Paris:
+
+Alpha. Agregar una segunda barra al autorrellenador y que la pestaña quede en modo foco para evitar problemas de la descarga desde consola.
+
+Versión final- Agregar un boton al click derecho que detecte el texto resaltado/seleccionado e inicie el proceso en base a eso.
+
+class="css-1wn0dlt"
+
+class="Button-text css-13i9exf"
+
+
+document.querySelector(".ret-pb-1")
+
+
+window.open("https://login-microfrontend.ecomm.cencosud.com/experiencia-posventa/chile/paris/compras-cliente?oc=3151143330","_blank")
+
+document.querySelector('[data-testid="toggle-show-more-btn"]').click()
+
+document.querySelector('.refund_approved_report_front-remote').querySelector("button").click()
+
+document.querySelector(".GeneralComponents__Box-refund_approved_report_front__sc-1alm2me-0").querySelector("a").click()
+
+const enlaceFantasma = document.createElement("a");
+
+// 2. Le asignamos la URL del blob
+enlaceFantasma.href = "blob:https://login-microfrontend.ecomm.cencosud.com/17684eb2-984c-4c12-9d54-aa52f9e7cef4";
+
+// 3. Le decimos al navegador que lo descargue y le damos un nombre
+enlaceFantasma.download = "comprobante_cencosud.pdf";
+
+// 4. Simulamos el clic
+enlaceFantasma.click();
+
+3150886960
+3145924010
+3148383320
+3149457250
+3145384790
+3147741770
+3143930570
+3150697000
+3149617130
+
