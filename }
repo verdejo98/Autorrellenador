@@ -1,0 +1,166 @@
+const LinkBase = 'https://docs.google.com/forms/d/e/1FAIpQLSfWWUoHrGnzLW8YwDUqxbpSNwlB49cvVr9Z8c-9-Za4AefZUA/viewform?';
+const MiFormulario = document.getElementById('Datos');
+const MiCorreo = document.getElementById("Correo");
+const Usuario = ["Jose Verdejo", "jose.verdejobarraza@externos-cl.cencosud.com"];
+
+async function rescatarDatos() {
+	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+	if (!tab?.id) {
+		throw new Error('No se encontró la pestaña activa.');
+	}
+
+	const [resultado] = await chrome.scripting.executeScript({
+		target: { tabId: tab.id },
+		func: () => {
+			function DebitoCredito(){
+				switch (document.querySelectorAll('.css-tuh9u2')[23].innerText){
+				case "DEBIT_CARD":
+					return "Reversa D\u00e9bito";
+				case "CREDIT_CARD":
+					return "Reversa Cr\u00e9dito";
+				}
+			};
+
+			function Flag(){
+				switch (document.querySelectorAll('.css-tuh9u2')[27].innerText){
+				case "PARIS":
+					return "Paris";
+				case "MKP":
+					return "Marketplace";
+				case "FF_MKP":
+					return "FFbyParis";
+				}
+			};
+
+			function EstadoOC(){
+				switch (document.querySelectorAll('.css-tuh9u2')[13].innerText){
+				case "REJECTED":
+					return "Rechazada";
+				case "APPROVED":
+					return "Aprobada";
+				case "PROCESSING":
+					return "Sin Gestion";
+				case "INIT":
+					return "INIT";
+				case "DISCARDED":
+					return "Discarted";
+				}
+			};
+
+			function CualFecha(){
+			switch (document.querySelectorAll('.css-tuh9u2')[23].innerText){
+				case "CREDIT_CARD":
+					return 5;
+					
+				case "DEBIT_CARD":
+					return 16;
+			}};	
+			const fecha = CualFecha();
+			const etiquetas = document.querySelectorAll('.css-tuh9u2');
+			const fechaVenta = etiquetas[fecha].innerText.split(", ")[0].split("/");
+			const fechaNC= etiquetas.[16].innerText.split(", ")[0];
+			const TipoSolicitud = DebitoCredito();
+			const TipoOrden = Flag();
+			const EstadoOrden = EstadoOC();
+			const limpiarNumero = (valor) => valor.replace(/[^0-9]/g, '');
+
+			return {
+				TipoSolicitud,
+				TipoOrden,
+				NC: etiquetas[2].innerText,
+				OC: etiquetas[1].innerText,
+				MontoNC: limpiarNumero(etiquetas[3].innerText),
+				MontoVenta: limpiarNumero(etiquetas[4].innerText),
+				CodAut: etiquetas[7].innerText,
+				CodCom: etiquetas[11].innerText.slice(4),
+				DiaVenta: fechaVenta[0],
+				MesVenta: fechaVenta[1],
+				AnoVenta: fechaVenta[2],
+				fechaNC,
+				EstadoOrden
+			};
+		}
+	});
+
+	return resultado.result;
+}
+
+MiCorreo.addEventListener("submit", async (event) => {
+	event.preventDefault();
+
+	try{
+		const Datos =  await rescatarDatos();
+		
+
+		const CorreoCliente = "Estimad@: /n/n Junto con saludar, informamos que su reembolso por la compra", " ya fue gestionado mediante nota de crédito N°",Datos.NC, ", por un monto de ",Datos.MontoNC, ", con fecha ", ". La devolución se realizará al mismo medio de pago en un plazo de 72 horas a 5 días hábiles, desde la fecha indicada. /n En el caso de no verlo reflejado en el plazo indicado, debes ingresar un requerimiento en tu banco con los documentos adjuntos en este correo, los cuales certifican que ya realizamos la devolución./n Con esta información, damos por cerrado su requerimiento.Le deseo un excelente día.
+ 
+
+	}catch(error){
+		console.error("Algo malo pasó", error);
+	};
+
+});
+
+MiFormulario.addEventListener('submit', async (event) => {
+	event.preventDefault();
+
+	try {
+		const Datos = await rescatarDatos();
+
+		if (Datos.EstadoOrden === "Aprobada") {
+			alert("Esta orden está aprobada. No se puede generar el formulario.");
+			return;
+		};
+
+		const Ncaso = document.getElementById('Caso').value;
+		const Responsable = Usuario[0];
+		const Correo = Usuario[1];
+		
+		let parametros;
+		switch (Datos.TipoSolicitud) {
+			case "Reversa Crédito":
+				parametros = new URLSearchParams({
+					"emailAddress": Correo,
+					"entry.2060321582": Datos.TipoSolicitud,
+					"entry.849307580": Datos.NC,
+					"entry.1803656691": Ncaso,
+					"entry.849549027": Datos.OC,
+					"entry.803061151": Datos.MontoNC,
+					"entry.601368857": Datos.MontoVenta,
+					"entry.1658044835": Datos.CodAut,
+					"entry.223628795": Datos.CodCom,
+					"entry.674009346": Datos.EstadoOrden,
+					"entry.1287609585_year": Datos.AnoVenta,
+					"entry.1287609585_month": Datos.MesVenta,
+					"entry.1287609585_day": Datos.DiaVenta,
+					"entry.1570111549": Responsable,
+					"entry.1406189435": Datos.TipoOrden
+				});
+				break;
+			case "Reversa Débito":
+				parametros = new URLSearchParams({
+					"emailAddress": Correo,
+					"entry.2060321582": Datos.TipoSolicitud,
+					"entry.757820114": Ncaso,
+					"entry.1860128100": Datos.NC,
+					"entry.450142508_year": Datos.AnoVenta,
+					"entry.450142508_month": Datos.MesVenta,
+					"entry.450142508_day": Datos.DiaVenta,
+					"entry.1658573492": Datos.MontoNC,
+					"entry.1888000393": Datos.OC,
+					"entry.1520881763": Datos.EstadoOrden,
+					"entry.1669909548": Responsable,
+					"entry.827167559": Datos.TipoOrden
+				});
+				break;
+			}
+		const url = `${LinkBase}&${parametros.toString()}`;
+		console.log('URL generada:', url);
+		
+		chrome.tabs.create({ url });
+	} catch (error) {
+		console.error('No se pudieron rescatar los datos:', error);
+	}
+});
+
+async function Esperar_boton() {}

@@ -1,0 +1,17 @@
+{
+	"manifest_version": 3,
+	"name": "Autorrellenador",
+	"version": "2.0",
+	"description": "Sirve para rellenar el formulario de transacciones y enviar correo de reembolso con comprobante",
+	"action": {
+		"default_popup": "main.html",
+		"default_icon":"icon.png"
+	},
+	"permissions": [
+		"activeTab", 
+		"scripting"
+	]
+		
+
+
+}

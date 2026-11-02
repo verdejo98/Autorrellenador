@@ -1,0 +1,3 @@
+
+
+"Estimad@: /n/n Junto con saludar, informamos que su reembolso por la compra" XXXXXXXXX " ya fue gestionado mediante nota de crédito N°" XXXXXXX", por un monto de " XXXXXXX", con fecha "XXXXXXX". La devolución se realizará al mismo medio de pago en un plazo de 72 horas a 5 días hábiles, desde la fecha indicada. /n En el caso de no verlo reflejado en el plazo indicado, debes ingresar un requerimiento en tu banco con los documentos adjuntos en este correo, los cuales certifican que ya realizamos la devolución./n Con esta información, damos por cerrado su requerimiento.Le deseo un excelente día.
